@@ -48,6 +48,8 @@ def train(train_data, net):
             loss.backward() #反向传播
             optimizer.step() #更新参数
         print("epoch: ", epoch, "accuracy: ", evaluate(test_data, net)) #打印每个epoch的准确率
+    #保存参数
+    torch.save(net.state_dict(), "./models/")
 
 
 def predict(test_data, net):
