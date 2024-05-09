@@ -49,15 +49,15 @@ def train(train_data, net):
             optimizer.step() #更新参数
         print("epoch: ", epoch, "accuracy: ", evaluate(test_data, net)) #打印每个epoch的准确率
     #保存参数
-    torch.save(net.state_dict(), "./models/")
+    torch.save(net.state_dict(), "./models/models.pth")
 
 
 def predict(test_data, net):
     for (n, (x, _)) in enumerate(test_data):
-        if n > 3:
+        if n > 2:
             break
         predict = torch.argmax(net.forward(x[0].view(-1, 28*28)))
-        plt.figure(n)
+        plt.figure(n+1)
         plt.imshow(x[0].view(28, 28))
         plt.title("prediction: " + str(int(predict)))
     plt.show()
@@ -72,7 +72,9 @@ if __name__ == "__main__":
 
     train_data = get_data_loader(True)   #加载训练集
     test_data = get_data_loader(False)    #加载测试集
-    net = Net()                           #定义神经网络    
+    net = Net()                           #定义神经网络
+    #加载权重文件
+    net.load_state_dict(torch.load("./models/models.pth"))    
 
     train(train_data, net)
     predict(test_data, net)
