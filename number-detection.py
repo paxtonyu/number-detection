@@ -11,14 +11,12 @@ class Net(torch.nn.Module):
     def __init__(self, device):  # 定义网络结构
         super().__init__()
         self.device = device
-        self.fc1 = torch.nn.Linear(28 * 28, 64).to(
-            self.device
-        )  # Linear层，输入特征数28*28，输出特征数64
+        self.fc1 = torch.nn.Linear(28 * 28, 64).to(self.device)
+        # Linear层，输入特征数28*28，输出特征数64
         self.fc2 = torch.nn.Linear(64, 64).to(self.device)
         self.fc3 = torch.nn.Linear(64, 64).to(self.device)
-        self.fc4 = torch.nn.Linear(64, 10).to(
-            self.device
-        )  # Linear层，输入特征数64，输出特征数10，10个output对应10个类别，是数字0-9
+        self.fc4 = torch.nn.Linear(64, 10).to(self.device)
+        # Linear层，输入特征数64，输出特征数10，10个output对应10个类别，是数字0-9
 
     def forward(self, x):  # 定义前向传播过程，x表示输入
         x = x.to(self.device)  # 将输入数据移动到指定的设备上
@@ -26,6 +24,34 @@ class Net(torch.nn.Module):
         x = torch.nn.functional.relu(self.fc2(x))
         x = torch.nn.functional.relu(self.fc3(x))
         x = torch.nn.functional.log_softmax(self.fc4(x), dim=1)
+        return x
+
+
+class Net_3F(torch.nn.Module):
+    def __init__(self, device):
+        super().__init__()
+        self.device = device
+        self.fc1 = torch.nn.Linear(28 * 28, 64).to(self.device)
+        self.fc2 = torch.nn.Linear(64, 64).to(self.device)
+        self.fc3 = torch.nn.Linear(64, 10).to(self.device)
+
+    def forward(self, x):
+        x = x.to(self.device)
+        x = torch.nn.functional.relu(self.fc1(x))
+        x = torch.nn.functional.relu(self.fc2(x))
+        x = torch.nn.functional.log_softmax(self.fc3(x), dim=1)
+        return x
+
+
+class Net_1F(torch.nn.Module):
+    def __init__(self, device):
+        super().__init__()
+        self.device = device
+        self.fc1 = torch.nn.Linear(28 * 28, 10).to(self.device)
+
+    def forward(self, x):
+        x = x.to(self.device)
+        x = torch.nn.functional.log_softmax(self.fc1(x), dim=1)
         return x
 
 
@@ -57,7 +83,7 @@ def evaluate(test_data, net):  # 评估神经网络识别准确率，输入为�
 def train(train_data, net):
     print("initial accuracy: ", evaluate(test_data, net))  # 打印初始准确率
     optimizer = torch.optim.Adam(net.parameters(), lr=0.001)  # 定义优化器
-    for epoch in range(3):
+    for epoch in range(5):
         for x, y in train_data:
             x, y = x.to(device), y.to(device)  # 将输入数据移动到 GPU 上
             net.zero_grad()  # 初始化，梯度清零
@@ -73,7 +99,7 @@ def train(train_data, net):
             "epoch: ", epoch, "accuracy: ", evaluate(test_data, net)
         )  # 打印每个epoch的准确率
     # 保存参数
-    torch.save(net.state_dict(), "./models/models.pth")
+    torch.save(net.state_dict(), "./models/models_net_1F.pth")
 
 
 def predict(test_data, net):
@@ -103,12 +129,12 @@ if __name__ == "__main__":
     if mode == "train":
         test_data = get_data_loader(False)
         train_data = get_data_loader(True)  # 加载训练集
-        net = Net(device)  # 定义神经网络
+        net = Net_1F(device)  # 定义神经网络
         # 加载权重文件
         train(train_data, net)
     else:
         test_data = get_data_loader(False)  # 加载测试集
-        net = Net(device)  # 定义神经网络
+        net = Net_1F(device)  # 定义神经网络
         # 加载权重文件
-        net.load_state_dict(torch.load("./models/models.pth"))
+        net.load_state_dict(torch.load("./models/models_net_1F.pth"))
         predict(test_data, net)
