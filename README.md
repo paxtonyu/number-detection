@@ -1,4 +1,4 @@
-# Number-Detection
+# Detection-test
 
 A small practice project for pytorch. In order to find out the relations between deepth of FC layer and accuracy.
 
