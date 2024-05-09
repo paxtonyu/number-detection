@@ -12,7 +12,7 @@ class Net_4F(torch.nn.Module):
         super().__init__()
         self.device = device
         self.fc1 = torch.nn.Linear(28 * 28, 64).to(self.device)
-        # Linear层，输入特征数28*28，输出特征数64
+        # Linear层，输入特征数28*28，输出特征数64，通过矩阵乘法来变幻
         self.fc2 = torch.nn.Linear(64, 64).to(self.device)
         self.fc3 = torch.nn.Linear(64, 64).to(self.device)
         self.fc4 = torch.nn.Linear(64, 10).to(self.device)
