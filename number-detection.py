@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 
 
-class Net(torch.nn.Module):
+class Net_4F(torch.nn.Module):
     def __init__(self, device):  # 定义网络结构
         super().__init__()
         self.device = device
@@ -40,6 +40,20 @@ class Net_3F(torch.nn.Module):
         x = torch.nn.functional.relu(self.fc1(x))
         x = torch.nn.functional.relu(self.fc2(x))
         x = torch.nn.functional.log_softmax(self.fc3(x), dim=1)
+        return x
+
+
+class Net_2F(torch.nn.Module):
+    def __init__(self, device):
+        super().__init__()
+        self.device = device
+        self.fc1 = torch.nn.Linear(28 * 28, 64).to(self.device)
+        self.fc2 = torch.nn.Linear(64, 10).to(self.device)
+
+    def forward(self, x):
+        x = x.to(self.device)
+        x = torch.nn.functional.relu(self.fc1(x))
+        x = torch.nn.functional.log_softmax(self.fc2(x), dim=1)
         return x
 
 
@@ -99,7 +113,7 @@ def train(train_data, net):
             "epoch: ", epoch, "accuracy: ", evaluate(test_data, net)
         )  # 打印每个epoch的准确率
     # 保存参数
-    torch.save(net.state_dict(), "./models/models_net_1F.pth")
+    torch.save(net.state_dict(), "./models/models_net_2F.pth")
 
 
 def predict(test_data, net):
@@ -129,12 +143,12 @@ if __name__ == "__main__":
     if mode == "train":
         test_data = get_data_loader(False)
         train_data = get_data_loader(True)  # 加载训练集
-        net = Net_1F(device)  # 定义神经网络
+        net = Net_2F(device)  # 定义神经网络
         # 加载权重文件
         train(train_data, net)
     else:
         test_data = get_data_loader(False)  # 加载测试集
-        net = Net_1F(device)  # 定义神经网络
+        net = Net_2F(device)  # 定义神经网络
         # 加载权重文件
-        net.load_state_dict(torch.load("./models/models_net_1F.pth"))
+        net.load_state_dict(torch.load("./models/models_net_2F.pth"))
         predict(test_data, net)
