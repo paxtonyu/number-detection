@@ -8,7 +8,7 @@ a small practice project for pytorch
 
 ## Net_2F
 
-5个epoch 最佳准确率 
+5个epoch 最佳准确率 0.9724
 
 ## Net_3F
 
