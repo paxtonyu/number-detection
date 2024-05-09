@@ -37,11 +37,7 @@ def evaluate(test_data, net):  #评估神经网络识别准确率，输入为测
                 n_total += 1
     return n_correct / n_total
 
-def main():
-    train_data = get_data_loader(True)   #加载训练集
-    test_data = get_data_loader(False)    #加载测试集
-    net = Net()                           #定义神经网络
-
+def train(train_data, net):
     print("initial accuracy: ", evaluate(test_data, net)) #打印初始准确率
     optimizer = torch.optim.Adam(net.parameters(), lr=0.001) #定义优化器
     for epoch in range(2):
@@ -53,6 +49,8 @@ def main():
             optimizer.step() #更新参数
         print("epoch: ", epoch, "accuracy: ", evaluate(test_data, net)) #打印每个epoch的准确率
 
+
+def predict(test_data, net):
     for (n, (x, _)) in enumerate(test_data):
         if n > 3:
             break
@@ -62,5 +60,17 @@ def main():
         plt.title("prediction: " + str(int(predict)))
     plt.show()
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":    
+    if torch.cuda.is_available():
+        device = torch.device("cuda")  # 使用GPU
+        print("GPU is available.")
+    else:
+        device = torch.device("cpu")  # 使用CPU
+        print("GPU is not available, using CPU.")
+
+    train_data = get_data_loader(True)   #加载训练集
+    test_data = get_data_loader(False)    #加载测试集
+    net = Net()                           #定义神经网络    
+
+    train(train_data, net)
+    predict(test_data, net)
