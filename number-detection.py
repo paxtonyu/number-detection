@@ -57,7 +57,7 @@ def evaluate(test_data, net):  # 评估神经网络识别准确率，输入为�
 def train(train_data, net):
     print("initial accuracy: ", evaluate(test_data, net))  # 打印初始准确率
     optimizer = torch.optim.Adam(net.parameters(), lr=0.001)  # 定义优化器
-    for epoch in range(2):
+    for epoch in range(3):
         for x, y in train_data:
             x, y = x.to(device), y.to(device)  # 将输入数据移动到 GPU 上
             net.zero_grad()  # 初始化，梯度清零
